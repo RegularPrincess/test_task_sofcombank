@@ -1,8 +1,39 @@
 from openpyxl import load_workbook
 import logging
-from models.Request import Request
+from models.request import Request
+from models.region import Region
 from db import DB
 import config as cfg
+import json
+import requests
+
+
+def regions_to_db():
+    body = {
+        'method': 'getRegionsList',
+    }
+    payload = "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"method\"\r\n\r\ngetRegionsList"
+    files = {'file': (None, payload),}
+    header = {
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryZMdp8iiQktcHpQah',
+        'Accept': 'application/json, text/plain, */*',
+        'DNT': '1',
+        'Origin': 'https://egrp365.ru',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/72.0.3626.96 Safari/537.36'
+    }
+
+    res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=body, files={'':''}, headers=header)
+    try:
+        json_data = json.loads(res.text)
+        if json_data['success']:
+            db = DB()
+            for x in json_data['data']:
+                region = Region(value=x['value'], name=x['name'])
+                db.insert(region, 'region_code')
+    except Exception as e:
+        logging.error('Region loading error. Response text: ' + res.text)
+        raise e
 
 
 def xslx_to_db():
@@ -24,18 +55,26 @@ def xslx_to_db():
         r.flat = next_str[9].value
         r.adress = next_str[10].value
         db = DB()
-        db.insert_request(r)
+        db.insert(r, 'request')
         i+=1
         next_str = sheet_ranges[i]
+
+
+def search(request):
+    pass
 
 
 def main(argv):
     logging.basicConfig(format=u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
                         level=logging.DEBUG)
     db = DB()
-    if db.request_table_is_empty():
+    if db.table_is_empty('request'):
         logging.info('Table request is empty. Filling...')
         xslx_to_db()
+    if db.table_is_empty('region_code'):
+        logging.info('Table region_code is empty. Filling...')
+        regions_to_db()
+
 
 
 if __name__ == '__main__':
