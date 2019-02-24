@@ -53,3 +53,22 @@ create_localy_code = """create table IF NOT EXISTS locality_code
 				on update cascade on delete cascade
 )
 ;"""
+
+create_notify_func = """CREATE OR REPLACE FUNCTION notify_insert() RETURNS trigger AS
+$BODY$
+BEGIN
+		EXECUTE format('NOTIFY insert_notify, ''%s''', NEW.id);
+-- 		EXECUTE format('insert into region_code (value, name) VALUES (12532, ''%s'')', NEW.id);
+		RETURN NULL;
+END;
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+"""
+
+drop_notify_trigger = """DROP TRIGGER IF EXISTS insert_trigger ON request;"""
+
+create_notify_trigger = """CREATE TRIGGER insert_trigger AFTER INSERT
+	ON request
+	FOR EACH ROW
+	EXECUTE PROCEDURE notify_insert();"""

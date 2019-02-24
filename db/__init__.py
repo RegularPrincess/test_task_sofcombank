@@ -18,4 +18,13 @@ with psycopg2.connect(CONN_STR) as connection:
 
     sql = s.create_localy_code
     cursor.execute(sql)
+
+    sql = s.create_notify_func
+    cursor.execute(sql)
+
+    sql = s.drop_notify_trigger
+    cursor.execute(sql)
+
+    sql = s.create_notify_trigger
+    cursor.execute(sql)
     connection.commit()

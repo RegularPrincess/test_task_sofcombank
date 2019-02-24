@@ -9,6 +9,7 @@ import logging
 
 class Insertlistner(Thread):
     def __init__(self, listen_function):
+        Thread.__init__(self)
         self.listner = listen_function
 
     def run(self):

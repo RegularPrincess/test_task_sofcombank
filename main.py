@@ -2,7 +2,8 @@ from openpyxl import load_workbook
 import logging
 from models.request import Request
 from models.region import Region
-from db import DB
+from db.db import DB
+from db.insert_listner import Insertlistner
 import config as cfg
 import json
 import requests
@@ -61,7 +62,8 @@ def xslx_to_db():
 
 
 def search(request):
-    pass
+    print('ACCEPT ID: ')
+    print(request)
 
 
 def main(argv):
@@ -71,10 +73,12 @@ def main(argv):
     if db.table_is_empty('request'):
         logging.info('Table request is empty. Filling...')
         xslx_to_db()
-    if db.table_is_empty('region_code'):
-        logging.info('Table region_code is empty. Filling...')
-        regions_to_db()
-
+    # if db.table_is_empty('region_code'):
+    #     logging.info('Table region_code is empty. Filling...')
+    #     regions_to_db()
+    insert_listner = Insertlistner(search)
+    insert_listner.start()
+    insert_listner.join()
 
 
 if __name__ == '__main__':
