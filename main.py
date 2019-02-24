@@ -23,7 +23,7 @@ def regions_to_db():
                       'Chrome/72.0.3626.96 Safari/537.36'
     }
 
-    res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=body, files={'':''}, headers=header)
+    res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=payload, headers=header)
     try:
         json_data = json.loads(res.text)
         if json_data['success']:
