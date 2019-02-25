@@ -99,6 +99,9 @@ class DB(object):
             row = self._db_cur.fetchone()
         return districts
 
+    def increase_try_num(self, request_id):
+        self.query('UPDATE request SET try_num = request.try_num + 1 WHERE id = %s;', (request_id,))
+
     def __del__(self):
         self._db_cur.close()
         self._db_connection.close()

@@ -14,7 +14,6 @@ import utilits as utils
 
 def regions_to_db():
     fields = {'method': 'getRegionsList'}
-    # payload = "-----011000010111000001101001\r\nContent-Disposition: form-data; name=\"method\"\r\n\r\ngetRegionsList"
     payload = utils.create_form_data(fields)
     res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=payload, headers=utils.HEADERS)
     try:
