@@ -32,6 +32,7 @@ class DB(object):
         request.block = row[9]
         request.flat = row[10]
         request.adress = row[11]
+        request.try_num = row[12]
         return request
 
     def query(self, query, params):

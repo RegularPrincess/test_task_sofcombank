@@ -25,4 +25,4 @@ class SearchShedule(Thread):
             for q in self.queue:
                 logging.info('Run sheduled search for id: ' + str(q.id))
                 self.searcher(q)
-            time.sleep(60)
+            time.sleep(1)

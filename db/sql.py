@@ -87,7 +87,7 @@ create_result_table = """create table IF NOT EXISTS result
 	adress varchar,
 	cadastral_map varchar,
 	floor integer,
-	square varchar,
+	square REAL,
 	coords varchar,
 	region_id bigint,
 	response_json json

@@ -36,7 +36,7 @@ def square_search(cadastral):
             square += c
             i += 1
             c = html[index + i]
-        return square
+        return float(square)
 
 
 def search_house(search_form, request_id):
@@ -52,7 +52,7 @@ def search_house(search_form, request_id):
                 result.cadastral = x['cn']
                 result.adress = x['address']
                 result.cadastral_map = 'https://egrp365.ru/map/?kadnum={}'.format(result.cadastral)
-                result.response_json = json_data
+                # result.response_json = json_data
                 result.region_id = search_form.macroRegionId
                 db.insert(result, 'result')
         else:
@@ -75,7 +75,7 @@ def search_flat(search_form, request_id):
                 result.cadastral = x['cn']
                 result.adress = x['address']
                 result.floor = x['floor']
-                result.response_json = json_data
+                # result.response_json = str(json_data)
                 result.region_id = search_form.macroRegionId
                 result.square = square_search(result.cadastral)
                 db.insert(result, 'result')
@@ -127,7 +127,7 @@ def search_in_city(request, cur_region_code):
 
 def search(request):
     db = DB()
-    db.increase_try_num(request.try_num)
+    db.increase_try_num(request.id)
     regions = db.get_all_regions()
     cur_region = request.region
     dists = []
