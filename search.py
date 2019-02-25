@@ -21,6 +21,22 @@ def get_or_downlod_districts(region_code):
         return db.get_all_districts_by_region(region_code)
 
 
+def square_search(cadastral):
+    res = requests.post('https://egrp365.ru/reestr?egrp={}'.format(cadastral), headers=utils.HEADERS)
+    html = res.text
+    pattern = 'Площадь — '
+    index = html.find(pattern)
+    if index != -1:
+        index += len(pattern)
+        square = ''
+        i = 0
+        c = html[index+i]
+        while c != ' ':
+            square += c
+            c = html[index + i]
+        return square
+
+
 def search_house(search_form):
     payload = utils.create_form_data(search_form.__dict__)
     res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=payload.encode('utf-8'), headers=utils.HEADERS)
@@ -32,16 +48,32 @@ def search_house(search_form):
                 result = Result()
                 result.cadastral = x['cn']
                 result.adress = x['address']
+                result.cadastral_map = 'https://egrp365.ru/map/?kadnum={}'.format(result.cadastral)
                 db.insert(result, 'result')
-                result.cadastral_map = get_house_detaile(result.cadastral)
+
     except Exception as e:
-        logging.error('Region loading error. Response text: ' + res.text)
+        logging.error('Search error. Response text: ' + res.text)
         raise e
-    pass
 
 
 def search_flat(search_form):
-    pass
+    payload = utils.create_form_data(search_form.__dict__)
+    res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=payload.encode('utf-8'),
+                        headers=utils.HEADERS)
+    try:
+        json_data = json.loads(res.text)
+        if json_data['success']:
+            db = DB()
+            for x in json_data['data']:
+                result = Result()
+                result.cadastral = x['cn']
+                result.adress = x['address']
+                result.floor = x['floor']
+                result.square = square_search(result.cadastral)
+                db.insert(result, 'result')
+    except Exception as e:
+        logging.error('Search error. Response text: ' + res.text)
+        raise e
 
 
 def search_in_region(request, cur_region_code):
@@ -71,7 +103,16 @@ def search_in_region(request, cur_region_code):
 
 
 def search_in_city(request, cur_region_code):
-    pass
+    search_form = SearchForm()
+    search_form.macroRegionId = cur_region_code
+    search_form.street = request.street
+    search_form.house = request.house
+    search_form.building = request.block
+    search_form.apartment = request.flat
+    if request.kind_premises == 'Дом':
+        search_house(search_form)
+    else:
+        search_flat(search_form)
 
 
 def search(request):
@@ -89,8 +130,6 @@ def search(request):
         search_in_city(request, cur_region_code)
     else:
         search_in_region(request, cur_region_code)
-
-    # cur_region.name = cur_region.name.replace(' г', '', 1)
 
 
 def search_all():
