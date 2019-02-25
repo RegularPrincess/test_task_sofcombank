@@ -8,6 +8,8 @@ import logging
 
 
 class Insertlistner(Thread):
+    """ Подписывается на уведомление от базы, о добавлеии записи (реализовано через TRIGGER и NOTIFY)
+    В случае появления записи получает её id и вызывает метод поиска"""
     def __init__(self, listen_function):
         Thread.__init__(self)
         self.listner = listen_function

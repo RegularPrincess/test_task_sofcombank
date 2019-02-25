@@ -1,9 +1,19 @@
 from db.db import DB
 
+
+"""
+Скрипты для анализа таблицы результатов
+Пункт 'определить количество объектов, для которых найденный адрес соответствует искомому' 
+не до конца понял - если адрес найден, очевидно он соответствует искомому 
+или подразумевается побуквенное совпадени(?)
+"""
+
+
 # count of found and not found:
 db = DB()
 print('Found: ', db.count_of_found())
 print('Not found: ', db.count_of_not_found())
+
 
 # group by square and region
 results = db.get_all_results()
@@ -36,7 +46,5 @@ for region_id, val in answ.items():
     print(code_name[region_id], ':')
     for range, count in val.items():
         print('\t', range, ': ', count)
-
-
 
 

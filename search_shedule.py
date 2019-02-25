@@ -6,6 +6,8 @@ from db.db import DB
 
 
 class SearchShedule(Thread):
+    """ Нить, собирающая не найденные запросы в очередь и запускающая их заново по таймауту до 3х раз
+    после чего помечает запрос как не найденный"""
     def __init__(self, searcher):
         Thread.__init__(self)
         self.queue = []
@@ -25,4 +27,4 @@ class SearchShedule(Thread):
             for q in self.queue:
                 logging.info('Run sheduled search for id: ' + str(q.id))
                 self.searcher(q)
-            time.sleep(1)
+            time.sleep(60)

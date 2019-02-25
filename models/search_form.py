@@ -1,4 +1,7 @@
 class SearchForm:
+    """
+    Представляет form-data для запросов на сайт
+    """
     def __init__(self, macroRegionId='', regionId='', settlementId='',
                  streetType='', street='', house='', structure='',
                  building='', apartment='', method='searchByAddress'):
