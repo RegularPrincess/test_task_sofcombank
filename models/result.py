@@ -8,3 +8,4 @@ class Result:
         self.square = None
         self.coords = None
         self.response_json = None
+        self.region_id = None

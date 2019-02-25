@@ -14,7 +14,8 @@ create_request =  """create table IF NOT EXISTS request
 	    block varchar(10),
 	    flat varchar(10),
 	    adress varchar,
-	    try_num integer default 0
+	    try_num integer default 0,
+	    not_found boolean DEFAULT FALSE 
         );"""
 
 create_region_code = """create table IF NOT EXISTS region_code
@@ -88,6 +89,7 @@ create_result_table = """create table IF NOT EXISTS result
 	floor integer,
 	square varchar,
 	coords varchar,
+	region_id bigint,
 	response_json json
 )
 ;

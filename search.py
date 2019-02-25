@@ -5,7 +5,7 @@ import requests
 
 from db.db import DB
 from models.region import Region
-from search_sheadule import SearchShedule
+from search_shedule import SearchShedule
 from models.result import Result
 from to_db_utils import district_to_db
 import Levenshtein as lv
@@ -52,10 +52,11 @@ def search_house(search_form, request_id):
                 result.cadastral = x['cn']
                 result.adress = x['address']
                 result.cadastral_map = 'https://egrp365.ru/map/?kadnum={}'.format(result.cadastral)
+                result.response_json = json_data
+                result.region_id = search_form.macroRegionId
                 db.insert(result, 'result')
         else:
             SEARCH_SHEDULE.append_request(request_id)
-
     except Exception as e:
         logging.error('Search error. Response text: ' + res.text)
         raise e
@@ -74,6 +75,8 @@ def search_flat(search_form, request_id):
                 result.cadastral = x['cn']
                 result.adress = x['address']
                 result.floor = x['floor']
+                result.response_json = json_data
+                result.region_id = search_form.macroRegionId
                 result.square = square_search(result.cadastral)
                 db.insert(result, 'result')
         else:

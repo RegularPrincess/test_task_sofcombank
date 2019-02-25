@@ -105,3 +105,7 @@ class DB(object):
     def __del__(self):
         self._db_cur.close()
         self._db_connection.close()
+
+    def set_not_found(self, request_id):
+        self.query('UPDATE request SET not_found = TRUE WHERE id = %s;', (request_id,))
+

@@ -1,6 +1,5 @@
 from threading import Thread
 import logging
-
 import time
 
 from db.db import DB
@@ -18,6 +17,8 @@ class SearchShedule(Thread):
         if request.try_num < 3:
             logging.info('Add request to shedule id: ' + str(request_id))
             self.queue.append(request)
+        else:
+            db.set_not_found(request_id)
 
     def run(self):
         while 1:
