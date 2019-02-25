@@ -56,15 +56,6 @@ def district_to_db(region_value):
     fields = {'method': 'getRegionsList',
               'region': region_value}
     payload = utils.create_form_data(fields)
-    """------WebKitFormBoundarytawBQYCB5EBjqkqm
-Content-Disposition: form-data; name="method"
-
-getRegionsList
-------WebKitFormBoundarytawBQYCB5EBjqkqm
-Content-Disposition: form-data; name="region"
-
-{}
-------WebKitFormBoundarytawBQYCB5EBjqkqm--"""
     res = requests.post('https://extra.egrp365.ru/api/extra/index.php', data=payload, headers=utils.HEADERS)
     try:
         json_data = json.loads(res.text)

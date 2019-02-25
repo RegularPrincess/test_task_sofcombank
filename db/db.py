@@ -5,6 +5,7 @@ from models.district import District
 
 import logging
 import config as cfg
+from models.result import Result
 
 
 class DB(object):
@@ -103,10 +104,34 @@ class DB(object):
     def increase_try_num(self, request_id):
         self.query('UPDATE request SET try_num = request.try_num + 1 WHERE id = %s;', (request_id,))
 
+    def set_not_found(self, request_id):
+        self.query('UPDATE request SET not_found = TRUE WHERE id = %s;', (request_id,))
+
+    def count_of_found(self):
+        self._db_cur.execute('SELECT count(*) FROM request r WHERE not r.not_found')
+        res = self._db_cur.fetchone()
+        return res[0]
+
+    def count_of_not_found(self):
+        self._db_cur.execute('SELECT count(*) FROM request r WHERE r.not_found')
+        res = self._db_cur.fetchone()
+        return res[0]
+
+    def get_all_results(self):
+        self._db_cur.execute('SELECT * FROM result', ())
+        results= []
+        row = self._db_cur.fetchone()
+        while row:
+            result = Result()
+            result.request_id = row[1]
+            result.adress = row[3]
+            result.square = row[6]
+            result.region_id = row[8]
+            results.append(result)
+            row = self._db_cur.fetchone()
+        return results
+
     def __del__(self):
         self._db_cur.close()
         self._db_connection.close()
-
-    def set_not_found(self, request_id):
-        self.query('UPDATE request SET not_found = TRUE WHERE id = %s;', (request_id,))
 
