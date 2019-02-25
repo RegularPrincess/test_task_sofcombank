@@ -19,7 +19,7 @@ create_request =  """create table IF NOT EXISTS request
 
 create_region_code = """create table IF NOT EXISTS region_code
 (
-	value integer not null
+	value BIGINT not null
 		constraint region_codes_pkey
 			primary key,
 	name varchar not null
@@ -29,11 +29,11 @@ create_region_code = """create table IF NOT EXISTS region_code
 
 create_district_code = """create table IF NOT EXISTS district_code
 (
-	value integer not null
+	value BIGINT not null
 		constraint district_codes_pkey
 			primary key,
 	name varchar not null,
-	region_value integer not null
+	region_value BIGINT not null
 		constraint region_value
 			references region_code
 				on update cascade on delete cascade
@@ -43,11 +43,11 @@ create_district_code = """create table IF NOT EXISTS district_code
 
 create_localy_code = """create table IF NOT EXISTS locality_code
 (
-	value integer not null
+	value BIGINT not null
 		constraint locality_code_pkey
 			primary key,
 	name varchar not null,
-	district_value integer not null
+	district_value BIGINT not null
 		constraint district_value
 			references district_code
 				on update cascade on delete cascade
@@ -72,3 +72,23 @@ create_notify_trigger = """CREATE TRIGGER insert_trigger AFTER INSERT
 	ON request
 	FOR EACH ROW
 	EXECUTE PROCEDURE notify_insert();"""
+
+create_result_table = """create table IF NOT EXISTS result
+(
+	id serial not null
+		constraint result_pkey
+			primary key,
+	request_id integer
+		constraint request_id
+			references request
+				on update cascade on delete cascade,
+	cadastral varchar,
+	adress varchar,
+	cadastral_map varchar,
+	floor integer,
+	square varchar,
+	coords varchar,
+	response_json json
+)
+;
+"""

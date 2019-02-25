@@ -31,6 +31,6 @@ class Insertlistner(Thread):
                     notify = conn.notifies.pop(0)
                     this_pid = os.getpid()
                     if notify.pid != this_pid:
-                        logging.info("Got NOTIFY: {}, {}, {}".format(notify.pid, notify.channel, notify.payload))
+                        logging.info("Got NOTIFY: pid: {}, channel: {}, id = {}".format(notify.pid, notify.channel, notify.payload))
                         row_id = int(notify.payload)
                         self.listner(row_id)
